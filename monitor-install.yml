@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  sudo: true
+  gather_facts: true
+
+  roles:
+    - java
+    - { role: logstash, logstash__redis_output_host: 'localhost', logstash__config_file: 'logstash-shipper.conf' }
+    - { role: newrelic, newrelic_license_key: x }

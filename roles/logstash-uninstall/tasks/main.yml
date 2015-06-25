@@ -1,0 +1,24 @@
+---
+- command: pkill logstash
+  ignore_errors: true
+
+- command: pkill -u logstash
+  ignore_errors: true
+
+- file: path=/usr/local/logstash state=absent
+
+- file: path=/usr/local/logstash-{{logstash__version}} state=absent
+
+- file: path=/usr/local/src/logstash-{{logstash__version}} state=absent
+
+- file: path=/usr/local/logstash-{{item}} state=absent
+  with_items: $logstash__previous_versions
+
+- file: path=/usr/local/src/logstash-{{item}} state=absent
+  with_items: $logstash__previous_versions
+
+- file: path=/etc/init/logstash-agent.conf state=absent
+
+- user: name=logstash state=absent force=yes
+
+- group: name=logstash state=absent

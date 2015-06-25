@@ -1,0 +1,8 @@
+---
+elasticsearch__service: elasticsearch
+elasticsearch__version: 1.1.1
+elasticsearch__servicewrapper_version: 4943d5a
+elasticsearch__cluster: mycluster
+
+elasticsearch__previous_versions:
+- 1.0.0

@@ -1,0 +1,8 @@
+- file: path={{item}} state=absent
+  with_items:
+  - /usr/local/src/jdk-{{jdk_version}}-linux-x64.tar.gz
+  - /usr/local/jdk{{jdk_version_padded}}
+
+- apt: pkg=symlinks state=present
+
+- command: symlinks -dr /usr/local

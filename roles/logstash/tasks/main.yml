@@ -1,0 +1,48 @@
+---
+- group: name=logstash state=present
+
+- user: name=logstash group=logstash shell=/bin/bash createhome=yes state=present
+
+- file: dest=/usr/local/src owner=root group=root state=directory
+
+- get_url: url=https://download.elasticsearch.org/logstash/logstash/logstash-{{ logstash__version }}.tar.gz
+           dest=/usr/local/src/logstash-{{ logstash__version }}.tar.gz
+
+- command: tar -xzf /usr/local/src/logstash-{{logstash__version}}.tar.gz -C /usr/local
+           creates=/usr/local/logstash-{{logstash__version}}
+  notify:
+  - restart logstash
+
+- file: src=/usr/local/logstash-{{logstash__version}} dest=/usr/local/logstash state=link
+
+- file: dest=/usr/local/logstash-{{logstash__version}}/logs owner=logstash group=logstash state=directory
+
+- name: logstash parser configuration
+  template: src={{logstash__config_file}} dest=/usr/local/logstash/{{logstash__config_file}}
+  notify:
+  - restart logstash
+  tags:
+  - config
+
+# todo: delete logstash default template
+
+- name: copy our elasticsearch template
+  copy: src=elasticsearch_template_sample.json dest=/usr/local/logstash/elasticsearch_template_sample.json
+
+- name: set ownership
+  file: path=/usr/local/logstash-{{logstash__version}} owner=logstash group=logstash state=directory recurse=true
+
+- name: agent init configuration
+  template: src=logstash-agent.conf dest=/etc/init/logstash-agent.conf
+  notify:
+  - restart logstash
+  tags:
+  - init-script
+
+- name: Delete the logstash Elasticsearch template
+  shell: curl -XDELETE http://{{elasticsearch__host}}:{{elasticsearch__port}}/_template/logstash?pretty
+  when: logstash__config_file == "logstash-indexer.conf"
+
+- name: Delete the sample Elasticsearch template
+  shell: curl -XDELETE http://{{elasticsearch__host}}:{{elasticsearch__port}}/_template/sample?pretty
+  when: logstash__config_file == "logstash-indexer.conf"

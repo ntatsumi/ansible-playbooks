@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  sudo: true
+  gather_facts: true
+
+  roles:
+    - ubuntu
+    - java
+    - { role: elasticsearch, elasticsearch__cluster: kibana }
+    - nginx
+    - kibana
+    - { role: newrelic, newrelic_license_key: x }
+    - redis
+    - { role: logstash, logstash__config_file: 'logstash-shipper.conf', logstash__redis_input_host: localhost, logstash__redis_input_threads: 3, logstash__elasticsearch_output_threads: 3 }

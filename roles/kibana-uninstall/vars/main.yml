@@ -1,0 +1,5 @@
+---
+kibana__version: 3.1.0
+
+kibana__previous_versions:
+- 3.0.0

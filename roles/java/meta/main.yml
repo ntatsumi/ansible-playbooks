@@ -1,0 +1,4 @@
+---
+dependencies:
+  # it's too risky to blow away java in this fashion
+  # - { role: java-uninstall }

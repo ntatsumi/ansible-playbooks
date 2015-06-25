@@ -1,0 +1,5 @@
+---
+logstash__version: 1.4.1
+
+logstash__previous_versions:
+- 1.4.0

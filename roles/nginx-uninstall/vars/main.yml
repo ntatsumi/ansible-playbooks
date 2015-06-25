@@ -1,0 +1,4 @@
+---
+nginx__version: 1.6.0
+nginx__previous_versions:
+- 1.4.7

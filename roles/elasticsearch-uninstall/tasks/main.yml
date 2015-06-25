@@ -1,0 +1,27 @@
+---
+- command: pkill -u elasticsearch
+  ignore_errors: true
+
+- file: path=/usr/local/elasticsearch state=absent
+
+- file: path=/usr/local/elasticsearch-{{elasticsearch__version}} state=absent
+
+- file: path=/usr/local/src/elasticsearch-{{elasticsearch__version}} state=absent
+
+- file: path=/usr/local/elasticsearch-{{item}} state=absent
+  with_items: $elasticsearch__previous_versions
+
+- file: path=/usr/local/src/elasticsearch-{{item}} state=absent
+  with_items: $elasticsearch__previous_versions
+
+- file: path=/etc/init.d/elasticsearch state=absent
+
+- command: update-rc.d elasticsearch remove
+
+- user: name=elasticsearch state=absent force=yes
+
+- group: name=elasticsearch state=absent
+
+- file: path=/etc/security/limits.d/elasticsearch.conf state=absent
+
+- file: path=/home/elasticsearch state=absent

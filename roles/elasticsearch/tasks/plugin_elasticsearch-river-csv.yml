@@ -1,0 +1,2 @@
+- name: install elasticsearch-river-csv
+  command: /usr/local/elasticsearch/bin/plugin -install river-csv -url https://github.com/AgileWorksOrg/elasticsearch-river-csv/releases/download/2.0.1/elasticsearch-river-csv-2.0.1.zip

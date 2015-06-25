@@ -1,0 +1,5 @@
+---
+jdk_version: 7u60
+jdk_version_padded: 1.7.0_60
+jdk_arch: x64
+jdk_download_url: https://www.dropbox.com/s/1hrp7y5y4wru3yi/jdk-7u60-linux-x64.gz?dl=1

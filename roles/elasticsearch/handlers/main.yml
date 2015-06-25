@@ -1,0 +1,12 @@
+---
+- name: start elasticsearch
+  service: name=elasticsearch state=started enabled=yes
+
+- name: stop elasticsearch
+  service: name=elasticsearch state=stopped enabled=yes
+
+- name: disable elasticsearch
+  service: name=elasticsearch state=stopped enabled=no
+
+- name: restart elasticsearch
+  service: name=elasticsearch state=restarted enabled=yes

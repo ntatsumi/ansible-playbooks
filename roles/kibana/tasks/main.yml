@@ -1,0 +1,16 @@
+---
+- file: dest=/usr/local/src owner=root group=root state=directory
+
+- get_url: url=https://download.elasticsearch.org/kibana/kibana/kibana-{{kibana__version}}.tar.gz
+           dest=/usr/local/src/kibana-{{kibana__version}}.tar.gz
+
+- command: tar -xzf /usr/local/src/kibana-{{kibana__version}}.tar.gz -C /home/nginx
+           creates=/home/nginx/kibana-{{kibana__version}}
+
+- file: src=/home/nginx/kibana-{{kibana__version}} dest=/home/nginx/kibana state=link
+
+- name: configure kibana site
+  template: src=kibana dest=/etc/nginx/sites-enabled/kibana
+  notify:
+  - restart nginx
+

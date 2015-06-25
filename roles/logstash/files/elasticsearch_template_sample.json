@@ -1,0 +1,38 @@
+{
+  "template": "logstash-*",
+  "settings" : {
+     "index.mapping.ignore_malformed" : true,
+     "index.refresh_interval" : "3s"
+  },
+  "mappings": {
+    "_default_": {
+       "_all" : {"enabled" : true},
+       "dynamic_templates" : [ {
+         "string_fields" : {
+           "match" : "*",
+           "match_mapping_type" : "string",
+           "mapping" : {
+             "type" : "string", "index" : "analyzed", "omit_norms" : true,
+               "fields" : {
+                 "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+               }
+           }
+         }
+       } ],
+       "properties" : {
+          "@version": { "type": "string", "index": "not_analyzed" },
+          "geoip"  : {
+           "type" : "object",
+             "dynamic": true,
+             "path": "full",
+             "properties" : {
+               "location" : { "type" : "geo_point" }
+             }
+          },
+          "server_response" : { "type" : "integer", "index" : "not_analyzed" },
+          "sample_long_value" : { "type" : "long", "index" : "not_analyzed" },
+          "sample_double_value" : { "type" : "double", "index" : "not_analyzed" },
+       }
+    }
+  }
+}

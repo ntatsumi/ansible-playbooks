@@ -1,0 +1,22 @@
+---
+- file: dest=/usr/local/src owner=root group=root state=directory
+
+- get_url: url={{jdk_download_url}} dest=/usr/local/src/jdk-{{jdk_version}}-linux-{{jdk_arch}}.tar.gz
+
+- command: tar xzf /usr/local/src/jdk-{{jdk_version}}-linux-{{jdk_arch}}.tar.gz -C /usr/local creates=/usr/local/jdk{{jdk_version_padded}}
+
+- file: src=/usr/local/jdk{{jdk_version_padded}} dest=/usr/local/java state=link
+
+- copy: src=usr_local_java_jre_lib_security_US_export_policy.jar dest=/usr/local/java/jre/lib/security/US_export_policy.jar
+
+- copy: src=usr_local_java_jre_lib_security_local_policy.jar dest=/usr/local/java/jre/lib/security/local_policy.jar
+
+- shell: chown -R root:root /usr/local/jdk{{jdk_version_padded}}
+
+- shell: ln -nsf /usr/local/java/bin/* /usr/local/bin
+
+- shell: /usr/local/jdk{{jdk_version_padded}}/bin/java -version 2>&1 |head -1 |awk '{print $3}' |sed -e 's/"//g'
+  register: java_version
+
+- fail: msg="The Java version does not match the expected value {{jdk_version_padded}}."
+  when: "'{{java_version.stdout}}' != '{{jdk_version_padded}}'"

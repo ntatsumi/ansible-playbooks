@@ -1,0 +1,5 @@
+---
+elasticsearch__service: elasticsearch
+elasticsearch__version: 1.1.1
+elasticsearch__previous_versions:
+- 1.0.0

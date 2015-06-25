@@ -1,0 +1,11 @@
+---
+- apt: upgrade=safe
+
+- command: apt-get autoremove -y
+
+- name: ensure commmon packages
+  apt: pkg={{item}} update_cache=yes cache_valid_time=43200
+  with_items:
+  - zip
+  - unzip
+  - make

@@ -1,0 +1,14 @@
+---
+- file: path=/home/nginx/kibana state=absent
+
+- file: path=/home/nginx/kibana-{{kibana__version}} state=absent
+
+- file: path=/etc/nginx/sites-enabled/kibana state=absent
+
+- name: remove previous kibana versions
+  file: path=/home/nginx/kibana-{{item}} state=absent
+  with_items: $kibana__previous_versions
+
+- name: remove previous kibana source versions
+  file: path=/usr/local/src/kibana-{{item}}.tar.giz state=absent
+  with_items: $kibana__previous_versions

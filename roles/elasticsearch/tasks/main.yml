@@ -1,0 +1,78 @@
+---
+- group: name=elasticsearch state=present
+
+- user: name=elasticsearch group=elasticsearch shell=/bin/bash createhome=yes state=present
+
+- file: dest=/usr/local/src owner=root group=root state=directory
+
+- copy: src=etc_security_limits.d_elasticsearch.conf dest=/etc/security/limits.d/elasticsearch.conf
+
+- get_url: url=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-{{elasticsearch__version}}.tar.gz 
+           dest=/usr/local/src/elasticsearch-{{elasticsearch__version}}.tar.gz
+
+- command: tar -xzf /usr/local/src/elasticsearch-{{elasticsearch__version}}.tar.gz -C /usr/local 
+           creates=/usr/local/elasticsearch-{{elasticsearch__version}}
+  notify:
+  - restart elasticsearch
+
+- file: src=/usr/local/elasticsearch-{{elasticsearch__version}} dest=/usr/local/elasticsearch state=link
+
+- file: src=/usr/local/elasticsearch/bin/elasticsearch dest=/usr/local/bin/elasticsearch state=link
+
+- file: path=/usr/local/elasticsearch/lock state=directory owner=elasticsearch group=elasticsearch mode=0755
+
+- file: path=/var/lib/{{item}} state=directory owner=elasticsearch group=elasticsearch mode=0755
+  with_items:
+  - elasticsearch
+  - elasticsearch/data
+
+- name: download elasticsearch service wrapper
+  shell: curl -L https://github.com/elasticsearch/elasticsearch-servicewrapper/tarball/master | tar -xz chdir=/usr/local/src creates=/usr/local/src/elasticsearch-elasticsearch-servicewrapper-{{elasticsearch__servicewrapper_version}}
+
+- name: copy elasticsearch service wrapper
+  command: cp -r /usr/local/src/elasticsearch-elasticsearch-servicewrapper-{{elasticsearch__servicewrapper_version}}/service /usr/local/elasticsearch/bin creates=/usr/local/elasticsearch/bin/service
+
+- name: config jsw for upstart
+  template: src=usr_local_elasticsearch_bin_service_elasticsearch dest=/usr/local/elasticsearch/bin/service/elasticsearch mode=0755
+  notify:
+  - restart elasticsearch
+  tags:
+  - config
+
+- name: config jsw
+  template: src=usr_local_elasticsearch_bin_service_elasticsearch.conf dest=/usr/local/elasticsearch/bin/service/elasticsearch.conf
+  notify:
+  - restart elasticsearch
+  tags: 
+  - config
+
+- name: set ownership
+  file: path=/usr/local/elasticsearch-{{elasticsearch__version}} owner=elasticsearch group=elasticsearch state=directory recurse=true
+
+- name: set data dir ownership
+  file: path=/var/lib/elasticsearch owner=elasticsearch group=elasticsearch state=directory recurse=true
+
+- name: install upstart script
+  command: /usr/local/elasticsearch/bin/service/elasticsearch install creates=/etc/init/elasticsearch.conf
+  tags: 
+  - init-script
+
+- template: src=etc_init_elasticsearch.conf dest=/etc/init/elasticsearch.conf mode=0755
+  notify:
+  - restart elasticsearch
+  tags: 
+  - init-script
+
+# - name: create logrotate config
+#   copy: src=etc_logrotate.d_elasticsearch dest=/etc/logrotate.d/elasticsearch owner=root group=root
+
+- name: config elasticsearch
+  template: src=usr_local_elasticsearch_config_elasticsearch.yml dest=/usr/local/elasticsearch/config/elasticsearch.yml owner=elasticsearch group=elasticsearch
+  notify: 
+  - restart elasticsearch
+  tags: 
+  - config
+
+- include: plugin_elasticsearch-head.yml
+
+- include: plugin_elasticsearch-river-csv.yml

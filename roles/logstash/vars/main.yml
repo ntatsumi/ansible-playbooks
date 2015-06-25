@@ -1,0 +1,12 @@
+---
+logstash__redis_output_host: localhost
+logstash__redis_input_host: localhost
+logstash__redis_input_threads: 7
+logstash__elasticsearch_output_threads: 7
+elasticsearch__host: localhost
+elasticsearch__port: 9200
+logstash__config_file: logstash-indexer.conf
+logstash__flags_extra: --verbose
+logstash__version: 1.4.2
+logstash__previous_versions:
+- 1.4.1

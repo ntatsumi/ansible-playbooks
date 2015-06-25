@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  sudo: true
+  gather_facts: true
+
+  roles:
+    - kibana-uninstall
+    - nginx-uninstall
+    - elasticsearch-uninstall
+    - logstash-uninstall
+    - java-uninstall

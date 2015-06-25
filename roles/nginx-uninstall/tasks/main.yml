@@ -1,0 +1,39 @@
+---
+- command: pkill nginx
+  ignore_errors: true
+
+- command: pkill -u nginx
+  ignore_errors: true
+
+- file: path=/usr/local/nginx state=absent
+
+- file: path=/usr/local/nginx-{{nginx__version}} state=absent
+
+- file: path=/usr/local/src/nginx-{{nginx__version}} state=absent
+
+- file: path=/usr/local/src/nginx-{{nginx__version}}.tar.gz state=absent
+
+- file: path=/usr/local/nginx-{{item}} state=absent
+  with_items: $nginx__previous_versions
+
+- file: path=/usr/local/src/nginx-{{item}} state=absent
+  with_items: $nginx__previous_versions
+
+- file: path=/usr/local/src/nginx-{{item}}.tar.gz state=absent
+  with_items: $nginx__previous_versions
+
+- file: path=/etc/nginx state=absent
+
+- file: path=/var/log/nginx state=absent
+
+- file: path=/etc/init.d/nginx state=absent
+
+- command: update-rc.d nginx remove
+
+- user: name=nginx state=absent force=yes
+
+- group: name=nginx state=absent
+
+- file: path=/etc/security/limits.d/nginx.conf state=absent
+
+- file: path=/home/nginx state=absent

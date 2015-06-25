@@ -1,0 +1,2 @@
+- name: install elasticsearch-head plugin at :9200/_plugin/head/
+  command: /usr/local/elasticsearch/bin/plugin -install mobz/elasticsearch-head
